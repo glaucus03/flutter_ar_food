@@ -4,29 +4,37 @@ import 'package:ar_flutter_plugin/managers/ar_object_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_session_manager.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_ar_food/models/datamodels/ar_camera_state.dart';
+import 'package:flutter_ar_food/models/services/ar_core_service.dart';
+import 'package:flutter_ar_food/models/services/camera_service.dart';
+import 'package:flutter_ar_food/models/services/openai_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final arCameraViewModelProvider =
     StateNotifierProvider<ARCameraViewModel, ARCameraState>(
-  (ref) => ARCameraViewModel(),
+  (ref) => ARCameraViewModel(ref),
 );
 
+final cameraServiceProvider = Provider<CameraService>((ref) {
+  return CameraService();
+});
+
+final arCoreServiceProvider = Provider<ARCoreService>((ref) {
+  return ARCoreService();
+});
+
+final openAIServiceProvider = Provider<OpenAIService>((ref) {
+  return OpenAIService();
+});
+
 class ARCameraViewModel extends StateNotifier<ARCameraState> {
-  ARCameraViewModel() : super(ARCameraState());
+  final Ref _ref;
+
+  ARCameraViewModel(this._ref) : super(ARCameraState());
 
   Future<void> initializeCamera(CameraDescription camera) async {
     // カメラの初期化ロジック
     // 状態を更新するなどの操作
-    final cameraController = CameraController(
-      camera,
-      ResolutionPreset.medium,
-      enableAudio:  false,
-    );
-    await cameraController.initialize();
-
-    state = state.copyWith(
-      cameraController:  cameraController,
-    );
+    await _ref.read(cameraServiceProvider).initializeCamera(camera);
   }
 
   Future<void> startCameraPreview() async {
