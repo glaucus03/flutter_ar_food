@@ -28,7 +28,7 @@ class ARCameraCenterWidget extends ConsumerWidget {
               textAlign: TextAlign.center,
             )),
         ElevatedButton(
-          onPressed: () => {viewModelNotifier.initializeCamera()},
+          onPressed: () => {viewModelNotifier.startCameraPreview},
           child: const Text('カメラスタート'),
         )
       ],

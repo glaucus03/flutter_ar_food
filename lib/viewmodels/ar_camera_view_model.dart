@@ -2,6 +2,7 @@ import 'package:ar_flutter_plugin/managers/ar_anchor_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_location_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_object_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_session_manager.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter_ar_food/models/datamodels/ar_camera_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -13,17 +14,34 @@ final arCameraViewModelProvider =
 class ARCameraViewModel extends StateNotifier<ARCameraState> {
   ARCameraViewModel() : super(ARCameraState());
 
-  Future<void> initializeCamera() async {
+  Future<void> initializeCamera(CameraDescription camera) async {
     // カメラの初期化ロジック
     // 状態を更新するなどの操作
+    final cameraController = CameraController(
+      camera,
+      ResolutionPreset.medium,
+      enableAudio:  false,
+    );
+    await cameraController.initialize();
+
+    state = state.copyWith(
+      cameraController:  cameraController,
+    );
   }
 
   Future<void> startCameraPreview() async {
     // カメラのプレビューを開始する
+    state = state.copyWith(
+      isCameraPreviewActive: true
+    );
+
   }
 
   Future<void> stopCameraPreview() async {
     // カメラのプレビューを停止する
+    state = state.copyWith(
+      isCameraPreviewActive: false
+    );
   }
 
   Future<void> takePicture() async {
@@ -50,12 +68,6 @@ class ARCameraViewModel extends StateNotifier<ARCameraState> {
     await arObjectManager.onInitialize();
 
     // arSessionManager.onPlaneOrPointTap = onPlaneOrPointTapped;
-    //  arObjectManager.onPanStart = onPanStarted;
-    //  arObjectManager.onPanChange = onPanChanged;
-    //  arObjectManager.onPanEnd = onPanEnded;
-    //  arObjectManager.onRotationStart = onRotationStarted;
-    //  arObjectManager.onRotationChange = onRotationChanged;
-    //  arObjectManager.onRotationEnd = onRotationEnded;
     //  arObjectManager.onNodeTap = onNodeTapped;
 
     state = state.copyWith(

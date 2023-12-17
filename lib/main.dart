@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-import 'package:flutter_ar_food/cameraApp.dart';
+import 'package:flutter_ar_food/views/pages/ar_camera_page.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -8,14 +9,14 @@ void main() async {
   final cameras = await availableCameras();
   final firstCamera = cameras.first;
 
-  runApp(
-    MaterialApp(
+  runApp(ProviderScope(
+    child: MaterialApp(
       title: 'AR+Food Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: CameraApp(camera: firstCamera),
+      home: ARCameraPage(camera: firstCamera),
     ),
-  );
+  ));
 }

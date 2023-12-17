@@ -29,7 +29,11 @@ class ARCameraFooterWidget extends ConsumerWidget {
             onPressed: () async {
               viewModelNotifier.onRightFooterButtonPressed();
             }),
-        Container(width: 50),
+        const Visibility(
+          visible: false,
+          maintainState: true,
+          child: Icon(Icons.arrow_right)
+        ),
       ],
     );
   }
