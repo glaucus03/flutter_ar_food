@@ -37,19 +37,19 @@ class ARCameraViewModel extends StateNotifier<ARCameraState> {
     await _ref.read(cameraServiceProvider).initializeCamera(camera);
   }
 
+  Future<void> disposeCamera(CameraDescription camera) async {
+    // カメラの終了ロジック
+    _ref.read(cameraServiceProvider).dispose();
+  }
+
   Future<void> startCameraPreview() async {
     // カメラのプレビューを開始する
-    state = state.copyWith(
-      isCameraPreviewActive: true
-    );
-
+    state = state.copyWith(isCameraPreviewActive: true);
   }
 
   Future<void> stopCameraPreview() async {
     // カメラのプレビューを停止する
-    state = state.copyWith(
-      isCameraPreviewActive: false
-    );
+    state = state.copyWith(isCameraPreviewActive: false);
   }
 
   Future<void> takePicture() async {

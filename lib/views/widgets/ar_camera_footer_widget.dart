@@ -15,6 +15,9 @@ class ARCameraFooterWidget extends ConsumerWidget {
       children: <Widget>[
         Visibility(
           visible: viewModel.isCameraPreviewActive,
+          maintainSize: true,
+          maintainAnimation: true,
+          maintainState: true,
           child: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () async {
@@ -29,10 +32,17 @@ class ARCameraFooterWidget extends ConsumerWidget {
             onPressed: () async {
               viewModelNotifier.onRightFooterButtonPressed();
             }),
-        const Visibility(
+        Visibility(
           visible: false,
+          maintainSize: true,
+          maintainAnimation: true,
           maintainState: true,
-          child: Icon(Icons.arrow_right)
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () async {
+              viewModelNotifier.onLeftFooterButtonPressed();
+            },
+          ),
         ),
       ],
     );
