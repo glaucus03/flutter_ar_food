@@ -34,11 +34,10 @@ class ARCameraCenterWidget extends ConsumerWidget {
       ],
     );
   }
-
   Widget _arCameraPreview(BuildContext context, WidgetRef ref) {
     final viewModelNotifier = ref.watch(arCameraViewModelProvider.notifier);
     return ARView(
-        onARViewCreated: viewModelNotifier.onARViewCreated,
+        onARViewCreated: viewModelNotifier.initializeARView,
         planeDetectionConfig: PlaneDetectionConfig.horizontalAndVertical);
   }
 }

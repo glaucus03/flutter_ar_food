@@ -59,32 +59,18 @@ class ARCameraViewModel extends StateNotifier<ARCameraState> {
     // state = state.copyWith(picture: picture);
   }
 
-  void onARViewCreated(
+  void initializeARView(
       ARSessionManager arSessionManager,
       ARObjectManager arObjectManager,
       ARAnchorManager arAnchorManager,
       ARLocationManager arLocationManager) async {
     // ARビューの初期化処理
-
-    await arSessionManager.onInitialize(
-      showFeaturePoints: true,
-      showPlanes: true,
-      showWorldOrigin: false,
-      handlePans: true,
-      handleRotation: true,
-    );
-    await arObjectManager.onInitialize();
-
-    // arSessionManager.onPlaneOrPointTap = onPlaneOrPointTapped;
-    //  arObjectManager.onNodeTap = onNodeTapped;
-
-    state = state.copyWith(
-      arSessionManager: arSessionManager,
-      arObjectManager: arObjectManager,
-      arAnchorManager: arAnchorManager,
-    );
-
-    // await copyAssetModelsToDocumentDirectory();
+    await _ref.read(arCoreServiceProvider).onARViewCreated(
+          arSessionManager,
+          arObjectManager,
+          arAnchorManager,
+          arLocationManager,
+        );
   }
 
   Future<void> placeARModel() async {

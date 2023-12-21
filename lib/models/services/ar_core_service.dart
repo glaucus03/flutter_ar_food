@@ -1,6 +1,7 @@
 import 'package:ar_flutter_plugin/datatypes/hittest_result_types.dart';
 import 'package:ar_flutter_plugin/datatypes/node_types.dart';
 import 'package:ar_flutter_plugin/managers/ar_anchor_manager.dart';
+import 'package:ar_flutter_plugin/managers/ar_location_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_object_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_session_manager.dart';
 import 'package:ar_flutter_plugin/models/ar_anchor.dart';
@@ -34,7 +35,6 @@ class ARCoreService {
 
   onPanEnded(String nodeName, Matrix4 newTransform) {
     debugPrint("Ended panning node $nodeName");
-    final pannedNode = nodes.firstWhere((element) => element.name == nodeName);
   }
 
   onRotationStarted(String nodeName) {
@@ -47,8 +47,27 @@ class ARCoreService {
 
   onRotationEnded(String nodeName, Matrix4 newTransform) {
     debugPrint("Ended rotating node $nodeName");
-    final rotatedNode = nodes.firstWhere((element) => element.name == nodeName);
   }
+
+  Future<void> onARViewCreated(
+      ARSessionManager arSessionManager,
+      ARObjectManager arObjectManager,
+      ARAnchorManager arAnchorManager,
+      ARLocationManager arLocationManager) async {
+
+    await arSessionManager.onInitialize(
+      showFeaturePoints: true,
+      showPlanes: true,
+      showWorldOrigin: false,
+      handlePans: true,
+      handleRotation: true,
+    );
+    await arObjectManager.onInitialize();
+
+    this.arSessionManager = arSessionManager;
+    this.arObjectManager = arObjectManager;
+
+    }
 
   Future<void> onPlaneOrPointTapped(
       List<ARHitTestResult> hitTestResults) async {
@@ -59,19 +78,22 @@ class ARCoreService {
         ARPlaneAnchor(transformation: singleHitTestResult.worldTransform);
     bool? didAddAnchor = await arAnchorManager!.addAnchor(newAnchor);
 
-    anchors.add(newAnchor);
+    if (didAddAnchor != null) {
+      anchors.add(newAnchor);
+    } else {
+      arSessionManager!.onError("Adding Anchor to Anchors failed");
+    }
 
     var newNode = ARNode(
         type: NodeType.fileSystemAppFolderGLB,
         uri: "Fox.glb",
-        scale: vec.Vector3(
-            0.1 , 0.1, 0.1),
+        scale: vec.Vector3(0.1, 0.1, 0.1),
         position: vec.Vector3(0.0, 0.0, 0.0),
         rotation: vec.Vector4(1.0, 0.0, 0.0, 0.0));
     bool? didAddNodeToAnchor =
         await arObjectManager!.addNode(newNode, planeAnchor: newAnchor);
 
-    if (didAddNodeToAnchor!) {
+    if (didAddNodeToAnchor != null) {
       nodes.add(newNode);
     } else {
       arSessionManager!.onError("Adding Node to Anchor failed");
