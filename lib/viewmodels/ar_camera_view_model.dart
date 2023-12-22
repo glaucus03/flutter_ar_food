@@ -71,10 +71,16 @@ class ARCameraViewModel extends StateNotifier<ARCameraState> {
           arAnchorManager,
           arLocationManager,
         );
+    await _ref.read(arCoreServiceProvider).copyAssetModelsToDocumentDirectory();
   }
 
   Future<void> placeARModel() async {
     // ARモデルの配置ロジック
+  }
+
+  Future<void> onRemoveARModel() async {
+    // ARモデルを取り除く
+    await _ref.read(arCoreServiceProvider).onRemoveEverything();
   }
 
   Future<void> onLeftFooterButtonPressed() async {

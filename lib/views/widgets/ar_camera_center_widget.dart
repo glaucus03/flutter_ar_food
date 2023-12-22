@@ -34,10 +34,22 @@ class ARCameraCenterWidget extends ConsumerWidget {
       ],
     );
   }
+
   Widget _arCameraPreview(BuildContext context, WidgetRef ref) {
     final viewModelNotifier = ref.watch(arCameraViewModelProvider.notifier);
-    return ARView(
-        onARViewCreated: viewModelNotifier.initializeARView,
-        planeDetectionConfig: PlaneDetectionConfig.horizontalAndVertical);
+    return Stack(children: [
+      Align(
+        alignment: FractionalOffset.bottomCenter,
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+          ElevatedButton(
+            onPressed: viewModelNotifier.onRemoveARModel,
+            child: const Text("Remove Everything"),
+          ),
+        ]),
+      ),
+      ARView(
+          onARViewCreated: viewModelNotifier.initializeARView,
+          planeDetectionConfig: PlaneDetectionConfig.horizontalAndVertical),
+    ]);
   }
 }

@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_ar_food/models/datamodels/chat_gpt_response.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:image_picker/image_picker.dart';
 
 class OpenAIService {
-  Future<ChatGPTResponse?> sendImageToGPT4Vision(String imagePath, String prompt) async {
+  Future<ChatGPTResponse?> sendImageToGPT4Vision(
+      String imagePath, String prompt) async {
     final String? apiKey = dotenv.get('OPENAI_API_KEY'); // 環境変数などからAPIキーを取得
     if ((apiKey ?? '').isEmpty) {
       throw Exception('APIKEYの設定が必要です。');
@@ -58,4 +60,15 @@ class OpenAIService {
     return null;
   }
 
+  Future<String> encodeImageToBase64() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+
+    if (pickedFile != null) {
+      final bytes = await File(pickedFile.path).readAsBytes();
+      return base64Encode(bytes);
+    } else {
+      throw Exception('画像が選択されていません');
+    }
+  }
 }

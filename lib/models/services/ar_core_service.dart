@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ar_flutter_plugin/datatypes/hittest_result_types.dart';
 import 'package:ar_flutter_plugin/datatypes/node_types.dart';
 import 'package:ar_flutter_plugin/managers/ar_anchor_manager.dart';
@@ -8,6 +10,8 @@ import 'package:ar_flutter_plugin/models/ar_anchor.dart';
 import 'package:ar_flutter_plugin/models/ar_hittest_result.dart';
 import 'package:ar_flutter_plugin/models/ar_node.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:vector_math/vector_math_64.dart' as vec;
 
 class ARCoreService {
@@ -54,7 +58,6 @@ class ARCoreService {
       ARObjectManager arObjectManager,
       ARAnchorManager arAnchorManager,
       ARLocationManager arLocationManager) async {
-
     await arSessionManager.onInitialize(
       showFeaturePoints: true,
       showPlanes: true,
@@ -66,8 +69,39 @@ class ARCoreService {
 
     this.arSessionManager = arSessionManager;
     this.arObjectManager = arObjectManager;
+  }
 
-    }
+  Future<void> copyAssetModelsToDocumentDirectory() async {
+    List<String> filesToCopy = [
+      "assets/RiggedFigure.glb",
+      "assets/RobotExpressive.glb",
+      "assets/Fox.glb"
+    ];
+
+    final Directory docDir = await getApplicationDocumentsDirectory();
+    final String docDirPath = docDir.path;
+
+    await Future.wait(
+      filesToCopy.map((String assetPath) async {
+        String assetFilename = assetPath.split('/').last;
+        File file = File('$docDirPath/$assetFilename');
+
+        final assetBytes = await rootBundle.load(assetPath);
+        final buffer = assetBytes.buffer;
+
+        await file.writeAsBytes(
+          buffer.asUint8List(
+            assetBytes.offsetInBytes,
+            assetBytes.lengthInBytes,
+          ),
+        );
+
+        debugPrint("Copied $assetPath to ${file.path}");
+      }),
+    );
+
+    debugPrint("Finished copying files to app's documents directory");
+  }
 
   Future<void> onPlaneOrPointTapped(
       List<ARHitTestResult> hitTestResults) async {
