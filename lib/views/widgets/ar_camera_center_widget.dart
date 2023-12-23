@@ -38,6 +38,11 @@ class ARCameraCenterWidget extends ConsumerWidget {
   Widget _arCameraPreview(BuildContext context, WidgetRef ref) {
     final viewModelNotifier = ref.watch(arCameraViewModelProvider.notifier);
     return Stack(children: [
+      Positioned.fill(
+          child: ARView(
+              onARViewCreated: viewModelNotifier.initializeARView,
+              planeDetectionConfig:
+                  PlaneDetectionConfig.horizontalAndVertical)),
       Align(
         alignment: FractionalOffset.bottomCenter,
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
@@ -47,9 +52,6 @@ class ARCameraCenterWidget extends ConsumerWidget {
           ),
         ]),
       ),
-      ARView(
-          onARViewCreated: viewModelNotifier.initializeARView,
-          planeDetectionConfig: PlaneDetectionConfig.horizontalAndVertical),
     ]);
   }
 }

@@ -18,6 +18,7 @@ class ARCoreService {
   late ARSessionManager? arSessionManager;
   late ARObjectManager? arObjectManager;
   late ARAnchorManager? arAnchorManager;
+  late ARLocationManager? arLocationManager;
 
   List<ARNode> nodes = [];
   List<ARAnchor> anchors = [];
@@ -67,8 +68,11 @@ class ARCoreService {
     );
     await arObjectManager.onInitialize();
 
+    arSessionManager.onPlaneOrPointTap = onPlaneOrPointTapped;
+    this.arAnchorManager = arAnchorManager;
     this.arSessionManager = arSessionManager;
     this.arObjectManager = arObjectManager;
+    this.arLocationManager = arLocationManager;
   }
 
   Future<void> copyAssetModelsToDocumentDirectory() async {
